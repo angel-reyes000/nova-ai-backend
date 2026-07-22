@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get("/api/users", auth, getUsers);
+app.get("/api/users", getUsers);
 app.post("/api/users", postUser);
 
 app.get("/api/loginUser", () => null);
