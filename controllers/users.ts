@@ -135,8 +135,7 @@ export async function auth (req: AuthRequest, res: Response, next: NextFunction)
         const token: any = req.headers.authorization?.split(" ")[1];
 
         if (!token) {
-            next();
-            return res.status(400).json({
+            return res.status(401).json({
                 "message":"Invalid Token"
             });
         };
