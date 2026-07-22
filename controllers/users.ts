@@ -135,18 +135,24 @@ export async function auth (req: AuthRequest, res: Response, next: NextFunction)
         const token: any = req.headers.authorization?.split(" ")[1];
 
         if (!token) {
+            console.log("None token")
             return res.status(401).json({
                 "message":"Invalid Token"
             });
         };
 
+        console.log("Verifying token...")
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+
+        console.log("Verify token successfully")
 
         req.user = decoded;
 
         next();
 
     } catch (error: any) {
+        console.log(error)
         return res.status(400).json({
             "Error": error.message,
             "message": "Error of authentication"
