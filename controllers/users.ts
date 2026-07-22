@@ -32,6 +32,32 @@ export async function postUser (req: Request, res: Response) {
     try {
         const { name, last_name, email, password }:{ name:string, last_name:string, email:string, password:string} = req.body;
 
+        if (!name || name.length > 50) {
+            return res.status(400).json({
+                "Error": "Invalid name"
+            })
+        } else if (!last_name || last_name.length > 50) {
+            return res.status(400).json({
+                "Error": "Invalid last name"
+            })
+        } else if (!email || email.length > 50) {
+            return res.status(400).json({
+                "Error": "Invalid email"
+            })
+        } else if (!password || password.length > 100) {
+            return res.status(400).json({
+                "Error": "Invalid password"
+            })
+        }
+
+        const repitEmail = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+
+        if (repitEmail.rows.length > 0) {
+            return res.status(409).json({
+                "Error": "User already exist",
+            });
+        };
+
         const consulta: string = `INSERT INTO users (name, last_name, email, password) 
                                   VALUES ($1, $2, $3, $4) RETURNING *`
 
@@ -47,7 +73,7 @@ export async function postUser (req: Request, res: Response) {
         })
 
     } catch (error: any) {
-        return res.json({
+        return res.status(404).json({
             message: "Error to post user",
             Error: error.message
         });
@@ -109,7 +135,8 @@ export async function auth (req: AuthRequest, res: Response, next: NextFunction)
         const token: any = req.headers.authorization?.split(" ")[1];
 
         if (!token) {
-            return res.json({
+            next();
+            return res.status(400).json({
                 "message":"Invalid Token"
             });
         };
@@ -127,3 +154,4 @@ export async function auth (req: AuthRequest, res: Response, next: NextFunction)
         })
     }
 }
+
