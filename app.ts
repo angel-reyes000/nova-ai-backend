@@ -16,7 +16,7 @@ app.get("/api/loginUser", () => null);
 app.post("/api/loginUser", loginUser);
 
 app.get('/api/conversations', auth, getConversations);
-app.post('/api/conversations', auth, postConversation);
+app.post('/api/conversations', auth, postConversation); //prueba
 
 
 app.listen("5001", () => {
