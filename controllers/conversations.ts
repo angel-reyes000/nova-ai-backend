@@ -11,13 +11,11 @@ export async function getConversations (req: Request, res: Response) {
 
         const consulta = "SELECT * FROM conversations";
 
-        const query = await pool.query(consulta);
+        const data = await pool.query(consulta);
 
-        const data = query.rows
-
-        return res.status(200).json({
-            data
-        })
+        return res.status(200).json(
+            data.rows
+        )
 
     } catch (error: any) {
         res.status(404).json({
@@ -42,13 +40,11 @@ export async function postConversation (req: AuthRequest, res: Response) {
 
         const values = [' ', user_id];
 
-        const query = await pool.query(consulta, values);
+        const data = await pool.query(consulta, values);
 
-        const data = query.rows[0]
-
-        return res.status(201).json({
-            data
-        });
+        return res.status(201).json(
+            data.rows
+        );
 
     } catch (error: any) {
         res.status(404).json({
