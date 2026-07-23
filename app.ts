@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { testConectionDB } from './database/db';
 import { getUsers, postUser, loginUser, auth } from './controllers/users';
+import { getConversations, postConversation } from './controllers/conversations';
 
 const app = express();
 
@@ -13,6 +14,9 @@ app.post("/api/users", postUser);
 
 app.get("/api/loginUser", () => null);
 app.post("/api/loginUser", loginUser);
+
+app.get('/api/conversations', auth, getConversations);
+app.post('/api/conversations', auth, postConversation); //prueba
 
 
 app.listen("5001", () => {
