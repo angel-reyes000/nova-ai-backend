@@ -38,12 +38,12 @@ export async function postConversation (req: AuthRequest, res: Response) {
             })
         }
 
-        const values = [' ', user_id];
+        const values = ['', user_id];
 
         const data = await pool.query(consulta, values);
 
-        return res.status(201).json(
-            data.rows
+        return res.status(200).json(
+            data.rows[0]
         );
 
     } catch (error: any) {

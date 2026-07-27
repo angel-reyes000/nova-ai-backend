@@ -3,7 +3,7 @@ import cors from 'cors';
 import { testConectionDB } from './database/db';
 import { getUsers, postUser, loginUser, auth } from './controllers/users';
 import { getConversations, postConversation } from './controllers/conversations';
-import { getMessages } from './controllers/messages';
+import { getMessages, postMessages } from './controllers/messages';
 
 const app = express();
 
@@ -20,6 +20,7 @@ app.get('/api/conversations', auth, getConversations);
 app.post('/api/conversations', auth, postConversation);
 
 app.get('/api/messages/:conversationID', auth, getMessages);
+app.post('/api/messages', auth, postMessages);
 
 
 app.listen("5001", () => {
