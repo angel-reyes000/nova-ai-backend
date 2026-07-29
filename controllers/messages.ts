@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { pool } from "../database/db";
 import { chatGemini } from "./gemini";
+import { postConversation } from "./conversations";
 
 export async function getMessages (req: Request, res: Response) {
     try {
@@ -58,7 +59,8 @@ export async function postMessages (req: Request, res: Response) {
 
         let dataTitle = '';
 
-        if (title === '' || title === ' ') {
+        if (title === 'Whitout conversation' || title === '') {
+            console.log("ENTRANDO A SIN TITULOOOOO")
             try {
                 const queryFirstMessage = `SELECT content FROM messages WHERE conversation_id = $1 ORDER BY id ASC LIMIT 1`;
                 const contentFirstMessage = await pool.query(queryFirstMessage, [conversation_id]);

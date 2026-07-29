@@ -6,16 +6,19 @@ interface AuthRequest extends Request {
     user?: {id: number, name: string}
 };
 
-export async function getConversations (req: Request, res: Response) {
+export async function getConversations (req: AuthRequest, res: Response) {
     try {
 
         const consulta = "SELECT * FROM conversations";
 
+        const user = req.user?.name;
+
         const data = await pool.query(consulta);
 
-        return res.status(200).json(
-            data.rows
-        )
+        return res.status(200).json([
+            data.rows,
+            user
+        ])
 
     } catch (error: any) {
         res.status(404).json({
@@ -38,7 +41,7 @@ export async function postConversation (req: AuthRequest, res: Response) {
             })
         }
 
-        const values = ['', user_id];
+        const values = ['Whitout conversation', user_id];
 
         const data = await pool.query(consulta, values);
 
