@@ -9,15 +9,15 @@ interface AuthRequest extends Request {
 export async function getConversations (req: AuthRequest, res: Response) {
     try {
 
-        const consulta = "SELECT * FROM conversations";
+        const user = req.user;
 
-        const user = req.user?.name;
+        const consulta = "SELECT * FROM conversations WHERE user_id = $1";
 
-        const data = await pool.query(consulta);
+        const data = await pool.query(consulta, [user?.id, ]);
 
         return res.status(200).json([
             data.rows,
-            user
+            user?.name
         ])
 
     } catch (error: any) {
@@ -52,6 +52,29 @@ export async function postConversation (req: AuthRequest, res: Response) {
     } catch (error: any) {
         res.status(404).json({
             "message": "Not found conversation",
+            "error": error.message
+        })
+    }
+}
+
+export async function deleteConversations (req: AuthRequest, res: Response) {
+    try {
+
+        const user = req.user;
+
+        const query = `DELETE FROM conversations WHERE user_id = $1 RETURNING *`;
+
+        const response = await pool.query(query, [user?.id, ]);
+
+        const data = await response.rows;
+
+        return res.status(200).json(
+            data
+        );
+
+    } catch (error: any) {
+        return res.status(400).json({
+            "message": "error in deleteConversation",
             "error": error.message
         })
     }

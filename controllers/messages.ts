@@ -83,6 +83,11 @@ export async function postMessages (req: Request, res: Response) {
 
                 const dataNewTitle = await pool.query(queryNewTitle, valuesNewTitle);
                 console.log("NUEVO  TITITIITITITITIT", dataNewTitle.rows[0], "NUEVO  TITITIITITITITIT");
+                
+                const newTitle = dataNewTitle.rows[0].title;
+
+                dataTitle = newTitle;
+                console.log("NEW ", dataTitle)
 
             } catch (error: any) {
                 return res.status(400).json({
