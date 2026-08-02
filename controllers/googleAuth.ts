@@ -1,16 +1,21 @@
+import { Request, Response } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
-import { Request, Response } from 'express';
-import { pool } from '../database/db';
-import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
-import crypto from "crypto";
+import { pool } from '../database/db';
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
+import jsonwebtoken from 'jsonwebtoken'
 
-dotenv.config();
+dotenv.config()
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT)
+interface RequestAuth extends Request {
+    user?: string | object
+}
 
-export async function googleAuth (req: Request, res: Response) {
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+
+export async function googleAuth (req: RequestAuth, res: Response) {
     try {
         const { token: googleToken } = req.body;
 
@@ -20,20 +25,22 @@ export async function googleAuth (req: Request, res: Response) {
 
         const ticket = await client.verifyIdToken({
             idToken: googleToken,
-            audience: process.env.GOOGLE_CLIENT
+            audience: process.env.GOOGLE_CLIENT_ID
         });
 
         const payload: any = ticket.getPayload();
+
+        console.log("PAYLOAD: ", payload)
 
         const checkUser = await pool.query(
             "SELECT * FROM users WHERE email = $1", 
             [payload.email]
         );
 
-        let userId;
+        let user;
 
         if (checkUser.rows.length > 0) {
-            userId = checkUser.rows[0].id;
+            user = checkUser.rows[0];
         } else {
             const consulta = `
                 INSERT INTO users (name, last_name, email, password)
@@ -49,14 +56,18 @@ export async function googleAuth (req: Request, res: Response) {
                 payload.email,
                 hashedPassword
             ]);
-            userId = resultado.rows[0].id;
+            user = resultado.rows[0];
         }
 
-        const jwtToken = jwt.sign(
-            { id: userId },
-            process.env.SECRET!,
+        console.log(user)
+
+        const jwtToken = jsonwebtoken.sign(
+            user,
+            process.env.JWT_SECRET!,
             { expiresIn: "7d" }
         );
+
+        req.user = user
 
         res.status(200).json({ token: jwtToken });
 
