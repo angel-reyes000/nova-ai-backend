@@ -27,7 +27,7 @@ app.post('/api/messages', auth, postMessages);
 
 app.get('/api/currentUser', auth, getCurrentUser);
 
-app.post('/api/auth/google', auth, googleAuth);
+app.post('/api/auth/google', googleAuth);
 
 
 app.listen("5001", () => {
