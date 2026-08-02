@@ -2,10 +2,11 @@
   "name": "nova-ai-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.ts",
   "scripts": {
     "start": "tsx app.ts",
     "dev": "nodemon --exec tsx app.ts",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
